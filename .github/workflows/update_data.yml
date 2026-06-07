@@ -1,0 +1,38 @@
+name: Update salary data
+
+on:
+  schedule:
+    - cron: '0 6 1,15 * *'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch Eurostat salary data
+        run: python python/fetch_eurostat_salary.py
+
+      - name: Fetch PPP data
+        run: python python/fetch_oecd.py
+
+      - name: Rebuild final dataset
+        run: python python/build_dataset.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "raimirsilva"
+          git config user.email "253516877+raimirsilva@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: auto-update salary data [skip ci]"
+          git push
