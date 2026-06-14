@@ -68,6 +68,19 @@ def main():
     df["salary_pps_annual"]  = (df["salary_pps"]  * 12).round(0)
     df["salary_real_annual"] = (df["salary_real"] * 12).round(0)
 
+    # --- Validação: trava contra erro de ESCALA (a causa do "/10" no Power BI) ---
+    # O gap nominal vs PPS fica tipicamente entre -50% e +100%. Se algo na origem
+    # inflar a escala (ex.: *1000 em vez de *100), falhamos aqui em vez de mandar
+    # dado 10x errado pro Power BI e ter que compensar com gap_pct_fixed = /10.
+    max_gap = df["eur_vs_pps_gap_pct"].abs().max()
+    assert max_gap < 200, (
+        f"Gap fora de escala: max abs = {max_gap}. "
+        "Esperado entre -100 e +200. Verifique a formula do eur_vs_pps_gap_pct."
+    )
+    assert df["pli_latest"].between(40, 250).all(), "PLI fora do intervalo plausivel (40-250)."
+    assert df["salary_eur"].notna().all(), "Ha salario EUR ausente apos o join (geo nao casou?)."
+    assert len(df) >= 25, f"Poucos paises no dataset final ({len(df)}). Esperado ~29."
+
     # Ordenar por salário EUR
     df = df.sort_values("salary_eur", ascending=False).reset_index(drop=True)
     df["rank_eur"]  = df["salary_eur"].rank(ascending=False).astype(int)

@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 .DS_Store
+
+# Arquivos pessoais — não versionar no repo público
+Portfolio Raimir.xlsx
+LinkedIn Posts.md
+Projeto1 Salary Explorer Passo a Passo.md
