@@ -60,9 +60,9 @@ def main():
 
     # Gap entre nominal e PPS (%)
     df["eur_vs_pps_gap_pct"] = (
-        (df["salary_eur"] - df["salary_pps"]) / df["salary_pps"] * 100
+        (df["salary_pps"] - df["salary_eur"]) / df["salary_eur"] * 100
     ).round(1)
-
+    
     # Salário anual estimado (mensal x 12)
     df["salary_eur_annual"]  = (df["salary_eur"]  * 12).round(0)
     df["salary_pps_annual"]  = (df["salary_pps"]  * 12).round(0)
