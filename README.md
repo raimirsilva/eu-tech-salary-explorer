@@ -22,7 +22,7 @@ This project answers two questions side by side:
 ## 2. Key insights (2022 salary data / 2024 price levels)
 
 - **Switzerland tops both rankings** — €10,198/month nominal, and still #1 (€6,434 EUR-equivalent) after adjusting for its 158.5 price-level index, the highest in Europe.
-- **Romania is the biggest mover.** Its nominal salary (€2,575) ranks #21, but adjusted for its low cost of living (PLI 65), it jumps to **#13 in real terms** — an 8-position climb, the largest of any country.
+- **Romania is the biggest mover.** Its nominal salary (€2,575) ranks #21, but adjusted for its low cost of living (PLI 75.5), it jumps to **#13 in real terms** — an 8-position climb, the largest of any country.
 - **The Netherlands punches above its nominal rank**: #10 nominally (€4,657) but #7 once cost of living is factored in.
 - **Estonia is the inverse case** — a relatively high nominal salary (#16, €3,078) falls to **#21 in real terms**, the steepest drop in the dataset, because its cost of living has caught up with its wages.
 - **On average across all 29 countries, PPS-adjusted salaries run ~9.8% higher than nominal EUR salaries** — but the spread is huge: from **-36.4%** in Switzerland (your euro buys less than it looks like) to **+78.8%** in Romania (your euro buys far more than it looks like).
@@ -31,33 +31,30 @@ This project answers two questions side by side:
 
 ## 3. Dashboard
 
-| Map (toggle EUR / PPS) | Salary vs. Cost of Living | Top 10 |
+| Map (toggle EUR / PPS / Real) | Purchasing Power: who gains & who loses | Top 10 |
 |---|---|---|
-| ![Map](docs/screenshot_map.png) | ![Scatter](docs/screenshot_scatter.png) | ![Top10](docs/screenshot_top10.png) |
+| ![Map](docs/screenshot_map.png) | ![Purchasing Power](docs/screenshot_purchasing_power.png) | ![Top10](docs/screenshot_top10.png) |
 
 > *Built in Power BI Desktop. Open `powerbi/salary_explorer.pbix` and click Refresh to pull the latest data from `data/processed/salary_explorer.csv`.*
+
+> **Design note:** an earlier version used a salary-vs-cost-of-living **scatter plot**. It was dropped mid-project: accurate, but slow to read for a non-technical audience. The diverging bar chart ("who gains & who loses") carries the same insight — adjusting for cost of living reshuffles the ranking — in a form anyone grasps at a glance. The layout fits only one of the two, so clarity won.
 
 ---
 
 ## 4. Architecture — two-layer auto-update
 
 ```
-┌─────────────────────────┐
-│  Layer 1 — Automatic     │   GitHub Actions, every 1st & 15th of the month
-│  fetch_eurostat_salary.py│ → Eurostat earn_ses22_20 (salaries, EUR + PPS)
-│  fetch_oecd.py           │ → Eurostat prc_ppp_ind   (price level indices)
-└────────────┬─────────────┘
-             │
-┌────────────▼─────────────┐
-│  Layer 2 — Manual          │   Updated every 2-3 months (cost of living
-│  data/raw/numbeo CSV       │   changes slowly; Numbeo blocks scraping)
-└────────────┬─────────────┘
-             │
-      build_dataset.py
-             │
-   data/processed/salary_explorer.csv
-             │
-      powerbi/salary_explorer.pbix  (click Refresh)
+┌───────────────────────────────┐
+│ Layer 1 — Data (Automatic)     │  GitHub Actions, 1st & 15th of each month
+│ fetch_eurostat_salary.py       │ → Eurostat earn_ses22_20 (salaries, EUR + PPS)
+│ fetch_oecd.py                  │ → Eurostat prc_ppp_ind   (price level indices)
+│ build_dataset.py               │ → data/processed/salary_explorer.csv
+└───────────────┬───────────────┘
+                │
+┌───────────────▼───────────────┐
+│ Layer 2 — Report (Manual)      │  Open the .pbix and click Refresh to pull
+│ powerbi/salary_explorer.pbix   │  the latest CSV. Full auto-refresh would
+└────────────────────────────────┘  require Power BI Service.
 ```
 
 ---
@@ -68,9 +65,12 @@ This project answers two questions side by side:
 |---|---|---|
 | [Eurostat](https://ec.europa.eu/eurostat) | `earn_ses22_20` — Structure of Earnings Survey | Mean monthly gross earnings, IT sector (NACE J), in EUR and PPS |
 | [Eurostat](https://ec.europa.eu/eurostat) | `prc_ppp_ind` — Price Level Indices | Price level index per country (EU27 = 100), used to compute "real" salary |
-| [Numbeo](https://www.numbeo.com) | Cost of Living Index (manual CSV) | Supplementary cost-of-living context |
 
 > Note: `fetch_oecd.py` was originally scoped to query OECD SDMX directly, but the project pivoted to Eurostat's PPP dataset (`prc_ppp_ind`) for consistency with the salary data and simpler automation — same price-level concept, single source.
+
+### Future enrichment (not yet integrated)
+
+A second, crowdsourced cost-of-living source such as [Numbeo](https://www.numbeo.com) could be layered in to cross-check the official Eurostat price levels — an "official vs. perceived" cost-of-living angle. It's deliberately left out for now to keep the pipeline **fully automated**: Numbeo restricts automated scraping and would require a manual CSV step, which would break the auto-update design.
 
 ---
 
@@ -110,7 +110,6 @@ Then open `powerbi/salary_explorer.pbix` in Power BI Desktop and hit **Refresh**
 
 - **GitHub Actions** (`.github/workflows/update_data.yml`) runs on the **1st and 15th of every month**, plus on-demand via *Run workflow*.
 - It re-fetches Eurostat salary and price-level data, rebuilds `salary_explorer.csv`, and commits the result automatically.
-- Numbeo cost-of-living data is versioned manually (updated every 2-3 months — it changes slowly and Numbeo blocks automated scraping).
 - The `.pbix` file does **not** refresh itself on GitHub — open it locally and click Refresh to pull the latest CSV. Fully automatic refresh would require Power BI Service/Pro.
 
 ---
