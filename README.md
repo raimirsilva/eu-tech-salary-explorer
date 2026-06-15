@@ -5,7 +5,7 @@
 ![Last Updated](https://img.shields.io/github/last-commit/raimirsilva/eu-tech-salary-explorer?label=data%20updated)
 ![Update Workflow](https://github.com/raimirsilva/eu-tech-salary-explorer/actions/workflows/update_data.yml/badge.svg)
 
-An interactive Power BI dashboard + Python data pipeline comparing **nominal tech salaries**, **purchasing-power-adjusted salaries**, and **cost of living** across 29 European countries — built on official Eurostat data and refreshed automatically every two weeks.
+An interactive Power BI dashboard + Python data pipeline comparing **nominal tech salaries**, **purchasing-power-adjusted salaries**, and **cost of living** across 29 European countries — built on official Eurostat data, with a pipeline that rebuilds automatically whenever Eurostat publishes new figures.
 
 ---
 
@@ -45,7 +45,7 @@ This project answers two questions side by side:
 
 ```
 ┌───────────────────────────────┐
-│ Layer 1 — Data (Automatic)    │  GitHub Actions, 1st & 15th of each month
+│ Layer 1 — Data (Automatic)    │  GitHub Actions, monthly (1st of each month)
 │ fetch_eurostat_salary.py      │ → Eurostat earn_ses22_20 (salaries, EUR + PPS)
 │ fetch_oecd.py                 │ → Eurostat prc_ppp_ind   (price level indices)
 │ build_dataset.py              │ → data/processed/salary_explorer.csv
@@ -110,8 +110,8 @@ Then open `powerbi/salary_explorer.pbix` in Power BI Desktop and hit **Refresh**
 
 ## 8. Automation
 
-- **GitHub Actions** (`.github/workflows/update_data.yml`) runs on the **1st and 15th of every month**, plus on-demand via *Run workflow*.
-- It re-fetches Eurostat salary and price-level data, rebuilds `salary_explorer.csv`, and commits the result automatically.
+- **GitHub Actions** (`.github/workflows/update_data.yml`) runs **monthly** (1st of each month), plus on-demand via *Run workflow*.
+- The workflow re-fetches Eurostat salary and price-level data, rebuilds `salary_explorer.csv`, and commits the result automatically — so any new release shows up on its own, with no manual work. (Eurostat's price-level indices update yearly; the earnings survey every four years.)
 - The `.pbix` file does **not** refresh itself on GitHub — open it locally and click Refresh to pull the latest CSV. Fully automatic refresh would require Power BI Service/Pro.
 
 ---
@@ -134,7 +134,7 @@ Built by **Raimir Silva** — an end-to-end data project on the European tech ma
 
 **Onde os profissionais de tech realmente ganham mais na Europa — e onde esse salário realmente *rende* mais?**
 
-Um dashboard interativo em Power BI + pipeline de dados em Python comparando **salários nominais de tech**, **salários ajustados por poder de compra** e **custo de vida** em 29 países europeus — construído sobre dados oficiais do Eurostat e atualizado automaticamente a cada duas semanas.
+Um dashboard interativo em Power BI + pipeline de dados em Python comparando **salários nominais de tech**, **salários ajustados por poder de compra** e **custo de vida** em 29 países europeus — construído sobre dados oficiais do Eurostat, com um pipeline que se reconstrói automaticamente sempre que o Eurostat publica novos dados.
 
 ---
 
@@ -174,7 +174,7 @@ Este projeto responde duas perguntas lado a lado:
 
 ```
 ┌───────────────────────────────┐
-│ Camada 1 — Dados (Automática) │  GitHub Actions, dias 1 e 15 de cada mês
+│ Camada 1 — Dados (Automática) │  GitHub Actions, mensalmente (dia 1)
 │ fetch_eurostat_salary.py      │ → Eurostat earn_ses22_20 (salários, EUR + PPS)
 │ fetch_oecd.py                 │ → Eurostat prc_ppp_ind   (níveis de preço)
 │ build_dataset.py              │ → data/processed/salary_explorer.csv
@@ -239,8 +239,8 @@ Depois abra `powerbi/salary_explorer.pbix` no Power BI Desktop e clique em **Atu
 
 ## 8. Automação
 
-- O **GitHub Actions** (`.github/workflows/update_data.yml`) roda nos **dias 1 e 15 de cada mês**, além de sob demanda via *Run workflow*.
-- Ele busca os dados de salário e nível de preços do Eurostat, reconstrói o `salary_explorer.csv` e commita o resultado automaticamente.
+- O **GitHub Actions** (`.github/workflows/update_data.yml`) roda **mensalmente** (dia 1 de cada mês), além de sob demanda via *Run workflow*.
+- O workflow rebusca os dados de salário e nível de preços do Eurostat, reconstrói o `salary_explorer.csv` e commita o resultado automaticamente — então qualquer release novo aparece sozinho, sem trabalho manual. (Os índices de nível de preços do Eurostat atualizam anualmente; a pesquisa salarial a cada quatro anos.)
 - O arquivo `.pbix` **não** se atualiza sozinho no GitHub — abra-o localmente e clique em Atualizar para puxar o CSV mais recente. Atualização totalmente automática exigiria o Power BI Service/Pro.
 
 ---
