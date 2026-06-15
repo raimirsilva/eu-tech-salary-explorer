@@ -68,6 +68,8 @@ This project answers two questions side by side:
 
 > Note: `fetch_oecd.py` was originally scoped to query OECD SDMX directly, but the project pivoted to Eurostat's PPP dataset (`prc_ppp_ind`) for consistency with the salary data and simpler automation — same price-level concept, single source.
 
+> See [`docs/insights.md`](docs/insights.md) for the dataset rationale, the confirmed API dimensions, and the API errors resolved during exploration.
+
 ### Future enrichment (not yet integrated)
 
 A second, crowdsourced cost-of-living source such as [Numbeo](https://www.numbeo.com) could be layered in to cross-check the official Eurostat price levels — an "official vs. perceived" cost-of-living angle. It's deliberately left out for now to keep the pipeline **fully automated**: Numbeo restricts automated scraping and would require a manual CSV step, which would break the auto-update design.
@@ -194,6 +196,8 @@ Este projeto responde duas perguntas lado a lado:
 | [Eurostat](https://ec.europa.eu/eurostat) | `prc_ppp_ind` — Price Level Indices | Índice de nível de preços por país (EU27 = 100), usado para calcular o salário "real" |
 
 > Nota: o `fetch_oecd.py` foi originalmente pensado para consultar o OECD SDMX diretamente, mas o projeto migrou para o dataset de PPP do Eurostat (`prc_ppp_ind`) por consistência com os dados salariais e automação mais simples — mesmo conceito de nível de preços, fonte única.
+
+> Veja [`docs/insights.md`](docs/insights.md) para a justificativa do dataset, as dimensões confirmadas da API e os erros resolvidos durante a exploração.
 
 ### Enriquecimento futuro (ainda não integrado)
 
