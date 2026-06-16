@@ -1,8 +1,8 @@
 """
-fetch_oecd.py
-Baixa Purchasing Power Parities (PPP) por país via Eurostat
-dataset prc_ppp_ind — Price Level Indices (base EU=100).
-Salva CSV cru em data/raw/ppp_raw.csv
+fetch_price_levels.py
+Baixa Price Level Indices (PLI) por país via Eurostat
+dataset prc_ppp_ind (base EU27=100).
+Salva CSV em data/raw/ppp_clean.csv
 """
 
 import eurostat
@@ -15,7 +15,7 @@ RAW_DIR.mkdir(parents=True, exist_ok=True)
 DATASET = "prc_ppp_ind"
 
 def main():
-    print("=== fetch_oecd.py (via Eurostat PPP) ===")
+    print("=== fetch_price_levels.py (Eurostat PPP/PLI) ===")
     print("  Baixando Price Level Indices...")
 
     df = eurostat.get_data_df(DATASET)

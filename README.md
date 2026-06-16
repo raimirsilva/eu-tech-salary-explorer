@@ -7,6 +7,8 @@
 
 An interactive Power BI dashboard + Python data pipeline comparing **nominal tech salaries**, **purchasing-power-adjusted salaries**, and **cost of living** across 29 European countries — built on official Eurostat data, with a pipeline that rebuilds automatically whenever Eurostat publishes new figures.
 
+**▶ [Open the live interactive dashboard](https://app.powerbi.com/view?r=eyJrIjoiOGM0ZTdjYWEtMjFhYi00YjYxLWJiYWQtMjJiZDBmNmFlNjY4IiwidCI6Ijg3ZmUwMjVlLWMxYWEtNGJjYS1iY2YzLTA2YjNjOTRjNGExZCJ9)** — toggle EUR / PPS / Real and explore the map right in your browser (no login).
+
 ---
 
 ## 1. The question
@@ -35,6 +37,8 @@ This project answers two questions side by side:
 |---|---|---|
 | ![Map](docs/screenshot_map.png) | ![Purchasing Power](docs/screenshot_purchasing_power.png) | ![Top10](docs/screenshot_top10.png) |
 
+> **▶ [Live interactive dashboard](https://app.powerbi.com/view?r=eyJrIjoiOGM0ZTdjYWEtMjFhYi00YjYxLWJiYWQtMjJiZDBmNmFlNjY4IiwidCI6Ijg3ZmUwMjVlLWMxYWEtNGJjYS1iY2YzLTA2YjNjOTRjNGExZCJ9)** (Power BI, public — no login required).
+>
 > *Built in Power BI Desktop. Open `powerbi/salary_explorer.pbix` and click Refresh to pull the latest data from `data/processed/salary_explorer.csv`.*
 
 > **Design note:** an earlier version used a salary-vs-cost-of-living **scatter plot**. It was dropped mid-project: accurate, but slow to read for a non-technical audience. The diverging bar chart ("who gains & who loses") carries the same insight — adjusting for cost of living reshuffles the ranking — in a form anyone grasps at a glance. The layout fits only one of the two, so clarity won.
@@ -47,7 +51,7 @@ This project answers two questions side by side:
 ┌───────────────────────────────┐
 │ Layer 1 — Data (Automatic)    │  GitHub Actions, monthly (1st of each month)
 │ fetch_eurostat_salary.py      │ → Eurostat earn_ses22_20 (salaries, EUR + PPS)
-│ fetch_oecd.py                 │ → Eurostat prc_ppp_ind   (price level indices)
+│ fetch_price_levels.py         │ → Eurostat prc_ppp_ind   (price level indices)
 │ build_dataset.py              │ → data/processed/salary_explorer.csv
 └───────────────┬───────────────┘
                 │
@@ -66,7 +70,7 @@ This project answers two questions side by side:
 | [Eurostat](https://ec.europa.eu/eurostat) | `earn_ses22_20` — Structure of Earnings Survey | Mean monthly gross earnings, IT sector (NACE J), in EUR and PPS |
 | [Eurostat](https://ec.europa.eu/eurostat) | `prc_ppp_ind` — Price Level Indices | Price level index per country (EU27 = 100), used to compute "real" salary |
 
-> Note: `fetch_oecd.py` was originally scoped to query OECD SDMX directly, but the project pivoted to Eurostat's PPP dataset (`prc_ppp_ind`) for consistency with the salary data and simpler automation — same price-level concept, single source.
+> Note: price levels were originally scoped to come from OECD SDMX, but the project pivoted to Eurostat's PPP dataset (`prc_ppp_ind`) for consistency with the salary data and simpler automation — same price-level concept, single source.
 
 > See [`docs/insights.md`](docs/insights.md) for the dataset rationale, the confirmed API dimensions, and the API errors resolved during exploration.
 
@@ -100,7 +104,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 python python/fetch_eurostat_salary.py
-python python/fetch_oecd.py
+python python/fetch_price_levels.py
 python python/build_dataset.py
 ```
 
@@ -136,6 +140,8 @@ Built by **Raimir Silva** — an end-to-end data project on the European tech ma
 
 Um dashboard interativo em Power BI + pipeline de dados em Python comparando **salários nominais de tech**, **salários ajustados por poder de compra** e **custo de vida** em 29 países europeus — construído sobre dados oficiais do Eurostat, com um pipeline que se reconstrói automaticamente sempre que o Eurostat publica novos dados.
 
+**▶ [Abrir o dashboard interativo](https://app.powerbi.com/view?r=eyJrIjoiOGM0ZTdjYWEtMjFhYi00YjYxLWJiYWQtMjJiZDBmNmFlNjY4IiwidCI6Ijg3ZmUwMjVlLWMxYWEtNGJjYS1iY2YzLTA2YjNjOTRjNGExZCJ9)** — alterne EUR / PPS / Real e explore o mapa direto no navegador (sem login).
+
 ---
 
 ## 1. A pergunta
@@ -164,6 +170,8 @@ Este projeto responde duas perguntas lado a lado:
 |---|---|---|
 | ![Mapa](docs/screenshot_map.png) | ![Poder de compra](docs/screenshot_purchasing_power.png) | ![Top10](docs/screenshot_top10.png) |
 
+> **▶ [Dashboard interativo ao vivo](https://app.powerbi.com/view?r=eyJrIjoiOGM0ZTdjYWEtMjFhYi00YjYxLWJiYWQtMjJiZDBmNmFlNjY4IiwidCI6Ijg3ZmUwMjVlLWMxYWEtNGJjYS1iY2YzLTA2YjNjOTRjNGExZCJ9)** (Power BI, público — sem login).
+>
 > *Feito no Power BI Desktop. Abra `powerbi/salary_explorer.pbix` e clique em Atualizar para puxar os dados mais recentes de `data/processed/salary_explorer.csv`.*
 
 > **Nota de design:** uma versão anterior usava um **gráfico de dispersão** salário × custo de vida. Foi descartado no meio do projeto: apesar de preciso, era mais lento de ler para um público não-técnico. O gráfico de barras divergentes ("quem ganha & quem perde") entrega o mesmo insight — ajustar pelo custo de vida embaralha o ranking — de um jeito que qualquer pessoa capta num relance. O layout comporta só um dos dois, então a clareza venceu.
@@ -176,7 +184,7 @@ Este projeto responde duas perguntas lado a lado:
 ┌───────────────────────────────┐
 │ Camada 1 — Dados (Automática) │  GitHub Actions, mensalmente (dia 1)
 │ fetch_eurostat_salary.py      │ → Eurostat earn_ses22_20 (salários, EUR + PPS)
-│ fetch_oecd.py                 │ → Eurostat prc_ppp_ind   (níveis de preço)
+│ fetch_price_levels.py         │ → Eurostat prc_ppp_ind   (níveis de preço)
 │ build_dataset.py              │ → data/processed/salary_explorer.csv
 └───────────────┬───────────────┘
                 │
@@ -195,7 +203,7 @@ Este projeto responde duas perguntas lado a lado:
 | [Eurostat](https://ec.europa.eu/eurostat) | `earn_ses22_20` — Structure of Earnings Survey | Ganho mensal bruto médio, setor de TI (NACE J), em EUR e PPS |
 | [Eurostat](https://ec.europa.eu/eurostat) | `prc_ppp_ind` — Price Level Indices | Índice de nível de preços por país (EU27 = 100), usado para calcular o salário "real" |
 
-> Nota: o `fetch_oecd.py` foi originalmente pensado para consultar o OECD SDMX diretamente, mas o projeto migrou para o dataset de PPP do Eurostat (`prc_ppp_ind`) por consistência com os dados salariais e automação mais simples — mesmo conceito de nível de preços, fonte única.
+> Nota: os níveis de preço foram originalmente pensados para vir do OECD SDMX, mas o projeto migrou para o dataset de PPP do Eurostat (`prc_ppp_ind`) por consistência com os dados salariais e automação mais simples — mesmo conceito de nível de preços, fonte única.
 
 > Veja [`docs/insights.md`](docs/insights.md) para a justificativa do dataset, as dimensões confirmadas da API e os erros resolvidos durante a exploração.
 
@@ -229,7 +237,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 python python/fetch_eurostat_salary.py
-python python/fetch_oecd.py
+python python/fetch_price_levels.py
 python python/build_dataset.py
 ```
 

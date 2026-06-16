@@ -23,8 +23,8 @@ jobs:
       - name: Fetch Eurostat salary data
         run: python python/fetch_eurostat_salary.py
 
-      - name: Fetch PPP data
-        run: python python/fetch_oecd.py
+      - name: Fetch price level data
+        run: python python/fetch_price_levels.py
 
       - name: Rebuild final dataset
         run: python python/build_dataset.py
